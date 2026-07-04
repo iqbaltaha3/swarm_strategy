@@ -188,20 +188,6 @@ graph LR
     F --> G["📋 Recommended Path"]
 ```
 
-## 🌐 Deploy to Streamlit Cloud
-
-```bash
-# 1. Push to GitHub
-git add .
-git commit -m "Add swarm strategy"
-git push origin main
-
-# 2. Go to share.streamlit.io
-# 3. New app → Select repo → Select app.py
-# 4. Add secrets: GROQ_API_KEY
-# 5. Done ✅
-```
-
 ## ⚙️ Configuration
 
 ### Environment Variables
