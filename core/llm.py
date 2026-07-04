@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 from langchain_groq import ChatGroq
 
+from constitution.loader import inject_constitution_into_prompt
+
 load_dotenv()
 
 # =====================================================
@@ -24,11 +26,19 @@ llm = ChatGroq(
 def call_llm(
     system_prompt: str,
     user_prompt: str,
+    agent_name: str | None = None,
 ) -> str:
+
+    effective_system_prompt = system_prompt
+    if agent_name:
+        effective_system_prompt = inject_constitution_into_prompt(
+            system_prompt,
+            agent_name,
+        )
 
     response = llm.invoke(
         [
-            ("system", system_prompt),
+            ("system", effective_system_prompt),
             ("human", user_prompt),
         ]
     )
@@ -44,6 +54,7 @@ def call_structured(
     system_prompt: str,
     user_prompt: str,
     schema: type[BaseModel],
+    agent_name: str | None = None,
 ):
 
     schema_json = json.dumps(
@@ -51,12 +62,19 @@ def call_structured(
         indent=2
     )
 
+    effective_system_prompt = system_prompt
+    if agent_name:
+        effective_system_prompt = inject_constitution_into_prompt(
+            system_prompt,
+            agent_name,
+        )
+
     response = llm.invoke(
         [
             (
                 "system",
                 f"""
-{system_prompt}
+{effective_system_prompt}
 
 Return ONLY valid JSON matching the schema below.
 If you can't complete all fields, use sensible defaults or omit optional fields.
