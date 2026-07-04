@@ -6,7 +6,7 @@ from typing import Dict, Optional
 # CONSTITUTION LOADER
 # =====================================================
 
-CONSTITUTION_DIR = Path(__file__).parent / "constitution"
+CONSTITUTION_DIR = Path(__file__).resolve().parent
 
 
 def load_constitution(filename: str) -> Dict:

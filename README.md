@@ -1,6 +1,6 @@
 # ⚖️ Legal Strategy Swarm
 
-AI-powered legal case analyzer using a 3-layer agent swarm. Synthesizes multiple legal perspectives and recommends strategic action plans.
+AI-powered legal case analyzer using a 3-layer agent swarm. Synthesizes multiple legal perspectives and recommends strategic action plans while grounding each agent in a shared global constitution plus agent-specific rules.
 
 ## 🎯 What It Does
 
@@ -9,6 +9,7 @@ Takes a case description and generates:
 - 5 parallel strategic perspectives (plaintiff, defendant, evidence, risk, settlement)
 - Win probability assessments
 - Concrete action recommendations
+- Constitution-guided reasoning for every agent
 
 ## 🏗️ Architecture
 
@@ -106,6 +107,11 @@ swarm_strategy/
 │   ├── state.py                   # Global state schema
 │   └── schemas.py                 # Core data models
 │
+├── constitution/
+│   ├── constitution.json         # Global constitution injected into all agents
+│   ├── loader.py                 # Constitution loading and prompt injection
+│   └── *_constitution.json       # Agent-specific constitutions
+│
 ├── layer_1_understanding/
 │   ├── battlefield_understanding_agent.py
 │   ├── schemas.py                 # BattlefieldAnalysis
@@ -156,6 +162,13 @@ print(result["strategy_judgment"])
 print(result["recommended_path"])
 ```
 
+### Constitution Behavior
+Each agent receives:
+- a shared global constitution from [constitution/constitution.json](constitution/constitution.json)
+- an additional agent-specific constitution from the matching file in [constitution](constitution)
+
+This is injected into the system prompt before the agent generates its response.
+
 ## 🔑 Key Features
 
 | Layer | Components | Output |
@@ -163,6 +176,7 @@ print(result["recommended_path"])
 | **1** | Case Analysis | Summary, Facts, Legal Issues, Strength |
 | **2** | 5 Parallel Agents | Arguments, Defenses, Evidence, Risks, Settlement Terms |
 | **3** | Judge + Planner | Win %, Strategy, Action Plan with Metrics |
+| **Constitution** | Global + Agent-Specific Rules | Consistent ethical and strategic guardrails across all agents |
 
 ## 📈 Agent Details
 
@@ -186,6 +200,14 @@ graph LR
     D --> F
     E --> F
     F --> G["📋 Recommended Path"]
+```
+
+## 🧪 Verification
+
+Run the constitution regression tests with:
+
+```bash
+python -m pytest -q test_constitution.py
 ```
 
 ## ⚙️ Configuration

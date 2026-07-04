@@ -1,3 +1,4 @@
+from constitution.loader import inject_constitution_into_prompt
 from core.llm import call_structured
 from core.state import StrategyState
 from .schemas import StrategyJudgment, RecommendedPath
@@ -13,8 +14,13 @@ def run_strategy_judge(state: StrategyState) -> dict:
     risk = str(state.get("risk_analysis", ""))
     settlement = str(state.get("settlement", ""))
     
+    system_prompt = inject_constitution_into_prompt(
+        JUDGE_SYSTEM,
+        "judge",
+    )
+
     result = call_structured(
-        system_prompt=JUDGE_SYSTEM,
+        system_prompt=system_prompt,
         user_prompt=JUDGE_USER.format(
             plaintiff=plaintiff,
             defendant=defendant,
@@ -34,8 +40,13 @@ def run_recommended_path(state: StrategyState) -> dict:
     battlefield = str(state.get("battlefield_analysis", ""))
     judge = str(state.get("strategy_judgment", ""))
     
+    system_prompt = inject_constitution_into_prompt(
+        PATH_SYSTEM,
+        "recommended_path",
+    )
+
     result = call_structured(
-        system_prompt=PATH_SYSTEM,
+        system_prompt=system_prompt,
         user_prompt=PATH_USER.format(
             battlefield=battlefield,
             judge=judge,
